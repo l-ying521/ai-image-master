@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+
+# 虚拟环境
+venv/
+.venv/
+env/
+ENV/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 上传和处理的图片（可选，如需保留请注释掉）
+static/uploads/
+static/processed/
+
+# 临时脚本
+git_push.py
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
