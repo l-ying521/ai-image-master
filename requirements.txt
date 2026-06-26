@@ -1,0 +1,14 @@
+# Flask Web Framework
+Flask>=3.0.0
+
+# 图像处理
+Pillow>=10.1.0
+
+# HTTP 请求库
+requests>=2.31.0
+
+# 环境变量管理
+python-dotenv>=1.0.0
+
+# Werkzeug (Flask 依赖)
+Werkzeug>=3.0.0
