@@ -1,0 +1,540 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixMagic · 图像增强工具</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fff5f7 0%, #ffeef2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            box-shadow: 0 20px 40px rgba(255, 120, 140, 0.15);
+            padding: 24px 32px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6f91, #ff9a9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo i {
+            background: linear-gradient(135deg, #ff6f91, #ff9a9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            font-weight: 500;
+            color: #6b4e5e;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: #ff6f91;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(255, 120, 140, 0.2);
+        }
+        .user i {
+            font-size: 22px;
+            color: #ff6f91;
+        }
+
+        .main {
+            display: flex;
+            gap: 28px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 36px;
+            padding: 24px 16px;
+            box-shadow: 0 8px 24px rgba(255, 160, 180, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 0 8px 16px 8px;
+            border-bottom: 2px solid #ffe0e8;
+            margin-bottom: 16px;
+        }
+        .sidebar-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a3a42;
+        }
+        .version {
+            background: #ffdae2;
+            color: #ff6f91;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .function-list {
+            list-style: none;
+            margin: 0 0 28px 0;
+        }
+        .function-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+            cursor: pointer;
+            color: #4a3a42;
+        }
+        .function-item i { width: 24px; font-size: 18px; }
+        .item-1 i { color: #ff80a5; }
+        .item-2 i { color: #ff99aa; }
+        .item-3 i { color: #6ecf97; }
+        .item-4 i { color: #c45b8d; }
+        .item-5 i { color: #b983ff; }
+        .item-6 i { color: #5db0e0; }
+        .item-7 i { color: #ffb347; }
+        .item-8 i { color: #e6739f; }
+        .item-9 i { color: #2cb5a0; }
+        .item-10 i { color: #6f7edb; }
+
+        .function-item:hover {
+            background: rgba(255, 200, 215, 0.3);
+        }
+        .function-item.active {
+            background: #ffd9e2;
+            color: #ff6f91;
+            font-weight: 600;
+        }
+        .function-item.active i {
+            color: #ff6f91;
+        }
+
+        .batch-btn {
+            background: linear-gradient(135deg, #a8e6cf, #d4edda);
+            border: none;
+            border-radius: 30px;
+            padding: 14px 0;
+            width: 100%;
+            font-weight: 600;
+            color: #2d6a4f;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 200, 150, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: auto;
+        }
+        .batch-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .workspace {
+            flex: 1;
+            border-radius: 36px;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 8px 24px rgba(255, 160, 180, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workspace.drag-over {
+            border: 2px dashed #f87171;
+            background: linear-gradient(135deg, #fff0f5, #f0fdf4);
+            transform: scale(0.98);
+            box-shadow: 0 4px 20px rgba(255, 113, 113, 0.2);
+        }
+
+        .upload-content {
+            text-align: center;
+            z-index: 1;
+            cursor: default;
+        }
+        .upload-icon {
+            font-size: 80px;
+            background: linear-gradient(135deg, #ff6f91, #ff9a9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+        .upload-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4a3a42;
+            margin-bottom: 12px;
+        }
+        .upload-hint {
+            color: #9b7b87;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .upload-limit {
+            color: #a38894;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #ff8da1, #ff6f91);
+            border: none;
+            border-radius: 40px;
+            padding: 18px 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 8px 20px rgba(255, 110, 140, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            border: none;
+            outline: none;
+        }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        .upload-btn:disabled {
+            background: #e0d0d5;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-radius: 24px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .app {
+                padding: 16px 20px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(74, 58, 66, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .toast.success {
+            background: rgba(110, 207, 151, 0.9);
+        }
+        .toast.error {
+            background: rgba(248, 113, 113, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar" role="navigation" aria-label="主导航">
+            <div class="logo">
+                <i class="fas fa-magic" aria-hidden="true"></i> PixMagic
+            </div>
+            <div class="nav-links">
+                <a href="#">工作台</a>
+                <a href="#">我的作品</a>
+                <a href="#">教程资源</a>
+            </div>
+            <div class="user">
+                <i class="fas fa-user-circle" aria-hidden="true"></i>
+                <span>Hi, 创作者</span>
+            </div>
+        </nav>
+
+        <div class="main">
+            <aside class="sidebar" aria-label="功能列表">
+                <div class="sidebar-header">
+                    <h3>图像增强工具</h3>
+                    <span class="version">v2.0</span>
+                </div>
+                <ul class="function-list" role="listbox">
+                    <li class="function-item item-1 active" data-function="quality_enhance" role="option" aria-selected="true" tabindex="0">
+                        <i class="fas fa-search-plus" aria-hidden="true"></i> 图像无损放大
+                    </li>
+                    <li class="function-item item-2" data-function="dehaze" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-smog" aria-hidden="true"></i> 图像去雾
+                    </li>
+                    <li class="function-item item-3" data-function="contrast_enhance" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-adjust" aria-hidden="true"></i> 图像对比度增强
+                    </li>
+                    <li class="function-item item-4" data-function="stretch_restore" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-arrows-alt" aria-hidden="true"></i> 拉伸图像恢复
+                    </li>
+                    <li class="function-item item-5" data-function="image_restore" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-tools" aria-hidden="true"></i> 图像修复
+                    </li>
+                    <li class="function-item item-6" data-function="definition_enhance" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-eye" aria-hidden="true"></i> 图像清晰度增强
+                    </li>
+                    <li class="function-item item-7" data-function="color_enhance" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-palette" aria-hidden="true"></i> 图像色彩增强
+                    </li>
+                    <li class="function-item item-8" data-function="moire_removal" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-border-all" aria-hidden="true"></i> 图片去摩尔纹
+                    </li>
+                    <li class="function-item item-9" data-function="document_removal" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-file-alt" aria-hidden="true"></i> 文档图片去底纹
+                    </li>
+                    <li class="function-item item-10" data-function="matting" role="option" aria-selected="false" tabindex="0">
+                        <i class="fas fa-cut" aria-hidden="true"></i> 智能抠图
+                    </li>
+                </ul>
+                <button class="batch-btn" aria-label="批量处理">
+                    <i class="fas fa-layer-group" aria-hidden="true"></i> 批量处理
+                </button>
+            </aside>
+
+            <div class="workspace" id="dropZone" role="button" tabindex="0" aria-label="上传图片区域">
+                <form method="post" enctype="multipart/form-data" action="/enhance" id="uploadForm">
+                    <input type="hidden" name="function" id="selectedFunction" value="quality_enhance">
+                    <input type="file" id="fileInput" name="image" accept="image/*" multiple required aria-label="选择图片文件">
+
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon" aria-hidden="true"></i>
+                        <p class="upload-title">点击或拖拽上传图片</p>
+                        <p class="upload-hint">支持 JPG, PNG, WEBP (最大 10MB)</p>
+                        <p class="upload-limit">可批量上传，最多 10 张</p>
+                        <button type="submit" class="upload-btn" id="submitBtn" disabled aria-disabled="true">
+                            ✨ 开始增强 ✨
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const MAX_FILES = 10;
+        const MAX_FILE_SIZE = 10 * 1024 * 1024;
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const toast = document.getElementById('toast');
+
+        const functionItems = document.querySelectorAll('.function-item');
+        const selectedFunctionInput = document.getElementById('selectedFunction');
+
+        function syncActiveFunction() {
+            const activeItem = document.querySelector('.function-item.active');
+            if (activeItem) {
+                selectedFunctionInput.value = activeItem.dataset.function;
+            }
+        }
+        syncActiveFunction();
+
+        functionItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                functionItems.forEach(i => {
+                    i.classList.remove('active');
+                    i.setAttribute('aria-selected', 'false');
+                });
+                this.classList.add('active');
+                this.setAttribute('aria-selected', 'true');
+                selectedFunctionInput.value = this.dataset.function;
+                showToast(`已选择：${this.textContent.trim()}`, 'success');
+            });
+
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    item.click();
+                }
+            });
+        });
+
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function validateFiles(files) {
+            if (files.length === 0) return { valid: false, message: '请选择文件' };
+            if (files.length > MAX_FILES) return { valid: false, message: `最多只能上传${MAX_FILES}张图片！` };
+            for (let file of files) {
+                if (!ALLOWED_TYPES.includes(file.type)) {
+                    return { valid: false, message: `不支持的文件格式：${file.name}\n支持 JPG, PNG, WEBP 格式` };
+                }
+                if (file.size > MAX_FILE_SIZE) {
+                    return { valid: false, message: `文件过大：${file.name}\n单个文件不能超过 10MB` };
+                }
+            }
+            return { valid: true, message: '' };
+        }
+
+        function updateButtonState(files) {
+            const validation = validateFiles(files);
+            if (!validation.valid && files.length > 0) {
+                showToast(validation.message, 'error');
+                fileInput.value = '';
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-disabled', 'true');
+                return false;
+            }
+            submitBtn.disabled = files.length === 0;
+            submitBtn.setAttribute('aria-disabled', files.length === 0);
+            return files.length > 0;
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('drag-over');
+        });
+        ['dragleave', 'drop'].forEach(event => {
+            dropZone.addEventListener(event, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('drag-over');
+            });
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                const validation = validateFiles(files);
+                if (validation.valid) {
+                    fileInput.files = files;
+                    updateButtonState(files);
+                    showToast(`已选择 ${files.length} 张图片`, 'success');
+                } else {
+                    showToast(validation.message, 'error');
+                }
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            updateButtonState(fileInput.files);
+        });
+
+        submitBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // 原生表单提交 - 不阻止默认行为
+        uploadForm.addEventListener('submit', function(e) {
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                showToast('请先选择图片', 'error');
+                return;
+            }
+            // 显示加载状态（提交后页面会刷新/跳转，这里只是短暂显示）
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner loading"></i> 处理中...';
+            // 让表单自然提交，浏览器会自动跳转到后端返回的页面
+        });
+    </script>
+</body>
+</html>
